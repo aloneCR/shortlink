@@ -7,5 +7,5 @@ package com.xpluo.shortlink.admin.common.constant;
  * @date 2023/12/14
  */
 public class RedisCacheConstant {
-    private static final String LOCK_USER_REGISTER_KEY = "short_link_lock_user_register";
+    public static final String LOCK_USER_REGISTER_KEY = "short_link:lock_user_register:";
 }

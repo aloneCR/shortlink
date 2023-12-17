@@ -14,8 +14,13 @@ import com.xpluo.shortlink.admin.dto.resp.UserRespDTO;
 import com.xpluo.shortlink.admin.service.UserService;
 import jakarta.annotation.Resource;
 import org.redisson.api.RBloomFilter;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import static com.xpluo.shortlink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
+import static com.xpluo.shortlink.admin.common.enums.UserErrorCodeEnum.USER_NAME_EXIST;
 
 /**
  * 用户接口实现层
@@ -28,6 +33,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Resource
     private RBloomFilter<String> userRegisterBloomFilter;
+
+    @Resource
+    private RedissonClient redissonClient;
 
     @Override
     public UserRespDTO getUserByUsername(String username) {
@@ -51,13 +59,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public void register(UserRegisterReqDTO requestParam) {
         if (hasUsername(requestParam.getUsername())) {
-            throw new ClientException(UserErrorCodeEnum.USER_NAME_EXIST);
-        }
-        int inserted = baseMapper.insert(BeanUtil.toBean(requestParam, UserDO.class));
-        if (inserted <= 0) {
-            throw new ClientException(UserErrorCodeEnum.USER_REGISTER_FAILED);
+            throw new ClientException(USER_NAME_EXIST);
         }
 
-        userRegisterBloomFilter.add(requestParam.getUsername());
+        RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY + requestParam.getUsername());
+
+        if (lock.tryLock()) {
+            try {
+                int inserted = baseMapper.insert(BeanUtil.toBean(requestParam, UserDO.class));
+                if (inserted <= 0) {
+                    throw new ClientException(UserErrorCodeEnum.USER_REGISTER_FAILED);
+                }
+
+                userRegisterBloomFilter.add(requestParam.getUsername());
+            } finally {
+                lock.unlock();
+            }
+        }
+        throw new ClientException(USER_NAME_EXIST);
     }
 }
