@@ -3,12 +3,22 @@ server:
 
 spring:
   datasource:
-    # ShardingSphere 对 Driver 自定义，实现分库分表等隐藏逻辑
-    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
-    # ShardingSphere 配置文件路径
-    url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
+#     ShardingSphere 对 Driver 自定义，实现分库分表等隐藏逻辑
+     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+#     ShardingSphere 配置文件路径
+     url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
+#    url: jdbc:mysql://127.0.0.1:3306/link?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: root
+#    driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
       host: 127.0.0.1
       port: 6379
       password: 123456
+
+mybatis-plus:
+  mapper-locations: classpath*:mappers/**/*.xml
+  type-aliases-package: com.xpluo.shortlink.admin.dao.entity
+  configuration:
+    map-underscore-to-camel-case: true

@@ -1,7 +1,5 @@
 package com.xpluo.shortlink.admin.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.xpluo.shortlink.admin.dao.entity.UserDO;
 import com.xpluo.shortlink.admin.dto.req.UserLoginReqDTO;
 import com.xpluo.shortlink.admin.dto.req.UserLogoutReqDTO;
 import com.xpluo.shortlink.admin.dto.req.UserRegisterReqDTO;
@@ -13,7 +11,7 @@ import com.xpluo.shortlink.admin.dto.resp.UserRespDTO;
  * @author luoxiaopeng
  * @date 2023/12/10
  */
-public interface UserService extends IService<UserDO> {
+public interface UserService {
     /**
      * 根据用户名查询用户信息
      *

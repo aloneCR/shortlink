@@ -26,6 +26,8 @@
         <jjwt.version>0.9.1</jjwt.version>
         <fastjson2.version>2.0.36</fastjson2.version>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <mybatis.version>3.0.3</mybatis.version>
+        <pagehelper.version>1.4.6</pagehelper.version>
         <dozer-core.version>6.5.2</dozer-core.version>
         <hutool-all.version>5.8.20</hutool-all.version>
         <redisson.version>3.21.3</redisson.version>
@@ -69,6 +71,18 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.version}</version>
             </dependency>
 
             <dependency>

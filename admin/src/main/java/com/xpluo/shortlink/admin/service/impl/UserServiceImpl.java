@@ -42,7 +42,9 @@ import static com.xpluo.shortlink.admin.common.enums.UserErrorCodeEnum.USER_NAME
  * @date 2023/12/10
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
+public class UserServiceImpl implements UserService {
+    @Resource
+    private UserMapper userMapper;
 
     @Resource
     private RBloomFilter<String> userRegisterBloomFilter;
@@ -55,10 +57,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public UserRespDTO getUserByUsername(String username) {
-        LambdaQueryWrapper<UserDO> queryWrapper = Wrappers.
-                lambdaQuery(UserDO.class).
-                eq(UserDO::getUsername, username);
-        UserDO userDO = baseMapper.selectOne(queryWrapper);
+        UserDO userDO = userMapper.getUserByUsername(username);
         if (null == userDO) {
             throw new ClientException("用户名不存在", BaseErrorCode.CLIENT_ERROR);
         }
@@ -82,7 +81,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
         if (lock.tryLock()) {
             try {
-                int inserted = baseMapper.insert(BeanUtil.toBean(requestParam, UserDO.class));
+                int inserted = userMapper.insertUser(BeanUtil.toBean(requestParam, UserDO.class));
                 if (inserted <= 0) {
                     throw new ClientException(UserErrorCodeEnum.USER_REGISTER_FAILED);
                 }
@@ -102,7 +101,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         // TODO 验证当前用户是否为登录用户，并验证用户名是否和当前登录用户名一致
         LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
                 .eq(UserDO::getUsername, requestParam.getUsername());
-        baseMapper.update(BeanUtil.toBean(requestParam, UserDO.class), wrapper);
+        userMapper.updateUser(BeanUtil.toBean(requestParam, UserDO.class));
     }
 
     @Override
@@ -121,12 +120,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             return new UserLoginRespDTO(token);
         }
 
-        LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
-                .eq(UserDO::getUsername, requestParam.getUsername())
-                .eq(UserDO::getPassword, requestParam.getPassword())
-                .eq(UserDO::getDelTag, 0);
-
-        UserDO userDO = baseMapper.selectOne(wrapper);
+        UserDO userDO = userMapper.getUserByUsernameAndPassword(requestParam.getUsername(), requestParam.getPassword());
         if (userDO == null) {
             throw new ClientException("用户不存在");
         }
