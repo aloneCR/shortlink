@@ -1,8 +1,11 @@
 package com.xpluo.shortlink.admin.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.xpluo.shortlink.admin.common.convention.result.Result;
 import com.xpluo.shortlink.admin.common.convention.result.Results;
 import com.xpluo.shortlink.admin.dto.req.GroupAddReqDTO;
+import com.xpluo.shortlink.admin.dto.req.GroupQueryReqDTO;
+import com.xpluo.shortlink.admin.dto.resp.GroupRespDTO;
 import com.xpluo.shortlink.admin.service.GroupService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,5 +27,10 @@ public class GroupController {
     public Result<Void> addGroup(@RequestBody GroupAddReqDTO request) {
         groupService.addGroup(request.getName());
         return Results.success();
+    }
+
+    @PostMapping("/queryGroup")
+    public Result<PageInfo<GroupRespDTO>> queryGroup(@RequestBody GroupQueryReqDTO request) {
+        return Results.success(groupService.listGroupPage(request));
     }
 }

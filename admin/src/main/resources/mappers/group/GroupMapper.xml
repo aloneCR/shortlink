@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xpluo.shortlink.admin.dao.mapper.GroupMapper">
+    <resultMap type="com.xpluo.shortlink.admin.dao.entity.GroupDO" id="groupResultMap">
+        <id column="id" property="id"/>
+        <result column="gid" property="gid"/>
+        <result column="name" property="name"/>
+        <result column="username" property="username"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="del_tag" property="delTag"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        id
+        , gid, `name`, username, sort_order, create_time, update_time, del_tag
+    </sql>
+
+    <insert id="insertShortLinkGroup" parameterType="com.xpluo.shortlink.admin.dao.entity.GroupDO">
+        insert into t_group(gid, name, username, sort_order)
+            value (#{groupDO.gid}, #{groupDO.name}, #{groupDO.username}, #{groupDO.sortOrder))
+    </insert>
+
+    <select id="queryShortLinkGroupByUsername" resultMap="groupResultMap">
+        select *
+        from t_group
+        where username = #{username}
+          and del_tag = 0
+        order by sort_order desc, update_time desc;
+    </select>
+</mapper>

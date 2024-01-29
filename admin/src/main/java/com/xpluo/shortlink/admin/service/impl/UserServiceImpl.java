@@ -5,7 +5,8 @@ import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xpluo.shortlink.admin.common.biz.user.properties.JwtProperties;
+import com.xpluo.shortlink.admin.common.constant.UserConstant;
 import com.xpluo.shortlink.admin.common.convention.errorcode.BaseErrorCode;
 import com.xpluo.shortlink.admin.common.convention.exception.ClientException;
 import com.xpluo.shortlink.admin.common.enums.UserErrorCodeEnum;
@@ -18,6 +19,7 @@ import com.xpluo.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.xpluo.shortlink.admin.dto.resp.UserLoginRespDTO;
 import com.xpluo.shortlink.admin.dto.resp.UserRespDTO;
 import com.xpluo.shortlink.admin.service.UserService;
+import com.xpluo.shortlink.admin.toolkit.JwtUtil;
 import jakarta.annotation.Resource;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
@@ -27,8 +29,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static com.xpluo.shortlink.admin.common.constant.RedisCacheConstant.LOCK_USER_REGISTER_KEY;
@@ -42,7 +44,9 @@ import static com.xpluo.shortlink.admin.common.enums.UserErrorCodeEnum.USER_NAME
  * @date 2023/12/10
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
+public class UserServiceImpl implements UserService {
+    @Resource
+    private UserMapper userMapper;
 
     @Resource
     private RBloomFilter<String> userRegisterBloomFilter;
@@ -53,12 +57,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    @Resource
+    private JwtProperties jwtProperties;
+
     @Override
     public UserRespDTO getUserByUsername(String username) {
-        LambdaQueryWrapper<UserDO> queryWrapper = Wrappers.
-                lambdaQuery(UserDO.class).
-                eq(UserDO::getUsername, username);
-        UserDO userDO = baseMapper.selectOne(queryWrapper);
+        UserDO userDO = userMapper.getUserByUsername(username);
         if (null == userDO) {
             throw new ClientException("用户名不存在", BaseErrorCode.CLIENT_ERROR);
         }
@@ -82,7 +86,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
         if (lock.tryLock()) {
             try {
-                int inserted = baseMapper.insert(BeanUtil.toBean(requestParam, UserDO.class));
+                int inserted = userMapper.insertUser(BeanUtil.toBean(requestParam, UserDO.class));
                 if (inserted <= 0) {
                     throw new ClientException(UserErrorCodeEnum.USER_REGISTER_FAILED);
                 }
@@ -102,7 +106,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         // TODO 验证当前用户是否为登录用户，并验证用户名是否和当前登录用户名一致
         LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
                 .eq(UserDO::getUsername, requestParam.getUsername());
-        baseMapper.update(BeanUtil.toBean(requestParam, UserDO.class), wrapper);
+        userMapper.updateUser(BeanUtil.toBean(requestParam, UserDO.class));
     }
 
     @Override
@@ -121,19 +125,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             return new UserLoginRespDTO(token);
         }
 
-        LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
-                .eq(UserDO::getUsername, requestParam.getUsername())
-                .eq(UserDO::getPassword, requestParam.getPassword())
-                .eq(UserDO::getDelTag, 0);
-
-        UserDO userDO = baseMapper.selectOne(wrapper);
+        UserDO userDO = userMapper.getUserByUsernameAndPassword(requestParam.getUsername(), requestParam.getPassword());
         if (userDO == null) {
             throw new ClientException("用户不存在");
         }
-        String uuid = UUID.randomUUID().toString();
-        stringRedisTemplate.opsForHash().put("login_" + requestParam.getUsername(), uuid, JSON.toJSONString(userDO));
+        // 生成令牌Token
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(UserConstant.USER_ID_KEY, userDO.getUsername());
+        String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
+
+        stringRedisTemplate.opsForHash().put("login_" + requestParam.getUsername(), token, JSON.toJSONString(userDO));
         stringRedisTemplate.expire("login_" + requestParam.getUsername(), 30L, TimeUnit.MINUTES);
-        return new UserLoginRespDTO(uuid);
+
+
+        return new UserLoginRespDTO(token);
     }
 
     @Override

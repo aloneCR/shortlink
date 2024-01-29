@@ -1,22 +1,13 @@
-package com.xpluo.shortlink.admin.dao.entity;
+package com.xpluo.shortlink.admin.dto.resp;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * @author luoxiaopeng
- * @date 2023/12/24
+ * @date 2024/1/22
  */
-@Getter
-@Setter
-@ToString
-@TableName("t_group")
-public class GroupDO extends BaseDO {
-
+public class GroupRespDTO {
     /**
      * 主键
      */
@@ -42,5 +33,4 @@ public class GroupDO extends BaseDO {
      * 分组排序
      */
     private int sortOrder;
-
 }

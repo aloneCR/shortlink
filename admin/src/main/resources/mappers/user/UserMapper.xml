@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xpluo.shortlink.admin.dao.mapper.UserMapper">
+    <resultMap type="com.xpluo.shortlink.admin.dao.entity.UserDO" id="userResultMap">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="real_name" property="realName"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="deletion_time" property="deletionTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="del_tag" property="delTag"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        id
+        , username , password, username, real_name, phone, email, deletion_time, create_time, update_time, del_tag
+    </sql>
+
+    <select id="getUserByUsername" resultMap="userResultMap">
+        select <include refid="baseColumns"/>
+            from t_user where username = #{username} and del_tag = 0;
+    </select>
+
+    <insert id="insertUser" parameterType="userDO">
+        insert into t_user(username, password, real_name, phone, email)
+            value (#{user.username}, #{user.password}, #{user.realName}, #{user.phone}, #{user.email})
+    </insert>
+
+    <update id="updateUser" parameterType="userDO">
+        update t_user
+        set password  = #{user.password},
+            real_name = #{user.realName},
+            phone     = #{user.phone},
+            email     = #{user.email}
+        where username = #{user.username}
+          and del_tag = 0;
+    </update>
+
+    <select id="getUserByUsernameAndPassword" resultMap="userResultMap">
+        select
+        <include refid="baseColumns"/>
+        from t_user where username = #{username} and password = #{password} and del_tag = 0;
+    </select>
+</mapper>
