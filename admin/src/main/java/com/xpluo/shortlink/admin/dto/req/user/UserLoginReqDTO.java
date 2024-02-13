@@ -1,4 +1,4 @@
-package com.xpluo.shortlink.admin.dto.req;
+package com.xpluo.shortlink.admin.dto.req.user;
 
 import lombok.Data;
 

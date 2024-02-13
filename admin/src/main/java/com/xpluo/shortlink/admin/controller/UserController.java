@@ -2,10 +2,10 @@ package com.xpluo.shortlink.admin.controller;
 
 import com.xpluo.shortlink.admin.common.convention.result.Result;
 import com.xpluo.shortlink.admin.common.convention.result.Results;
-import com.xpluo.shortlink.admin.dto.req.UserLoginReqDTO;
-import com.xpluo.shortlink.admin.dto.req.UserLogoutReqDTO;
-import com.xpluo.shortlink.admin.dto.req.UserRegisterReqDTO;
-import com.xpluo.shortlink.admin.dto.req.UserUpdateReqDTO;
+import com.xpluo.shortlink.admin.dto.req.user.UserLoginReqDTO;
+import com.xpluo.shortlink.admin.dto.req.user.UserLogoutReqDTO;
+import com.xpluo.shortlink.admin.dto.req.user.UserRegisterReqDTO;
+import com.xpluo.shortlink.admin.dto.req.user.UserUpdateReqDTO;
 import com.xpluo.shortlink.admin.dto.resp.UserLoginRespDTO;
 import com.xpluo.shortlink.admin.dto.resp.UserRespDTO;
 import com.xpluo.shortlink.admin.service.UserService;

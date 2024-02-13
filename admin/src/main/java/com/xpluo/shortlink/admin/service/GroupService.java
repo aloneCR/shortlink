@@ -1,7 +1,9 @@
 package com.xpluo.shortlink.admin.service;
 
 import com.github.pagehelper.PageInfo;
-import com.xpluo.shortlink.admin.dto.req.GroupQueryReqDTO;
+import com.xpluo.shortlink.admin.dto.req.group.GroupDeleteReqDTO;
+import com.xpluo.shortlink.admin.dto.req.group.GroupQueryReqDTO;
+import com.xpluo.shortlink.admin.dto.req.group.GroupUpdateReqDTO;
 import com.xpluo.shortlink.admin.dto.resp.GroupRespDTO;
 
 import java.util.List;
@@ -30,4 +32,8 @@ public interface GroupService {
      * @return 短链接分组信息列表
      */
     PageInfo<GroupRespDTO> listGroupPage(GroupQueryReqDTO request);
+
+    void updateGroupName(GroupUpdateReqDTO req);
+
+    void deleteGroup(GroupDeleteReqDTO req);
 }

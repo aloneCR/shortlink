@@ -17,4 +17,9 @@ public interface GroupMapper {
     void insertShortLinkGroup(@Param("groupDO") GroupDO entity);
 
     List<GroupDO> queryShortLinkGroupByUsername(@Param("username") String username);
+
+    int updateGroupName(@Param("groupDO") GroupDO entity);
+
+    int deleteGroupByGid(@Param("username") String username,
+                         @Param("gid") String gid);
 }

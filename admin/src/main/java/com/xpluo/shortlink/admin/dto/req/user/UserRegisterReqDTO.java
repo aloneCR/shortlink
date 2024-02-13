@@ -1,4 +1,4 @@
-package com.xpluo.shortlink.admin.dto.req;
+package com.xpluo.shortlink.admin.dto.req.user;
 
 import lombok.Data;
 
@@ -6,10 +6,10 @@ import lombok.Data;
  * 用户注册请求体
  *
  * @author luoxiaopeng
- * @date 2023/12/23
+ * @date 2023/12/13
  */
 @Data
-public class UserUpdateReqDTO {
+public class UserRegisterReqDTO {
     /**
      * 用户名
      */

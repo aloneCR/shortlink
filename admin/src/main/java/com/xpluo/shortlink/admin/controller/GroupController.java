@@ -3,15 +3,14 @@ package com.xpluo.shortlink.admin.controller;
 import com.github.pagehelper.PageInfo;
 import com.xpluo.shortlink.admin.common.convention.result.Result;
 import com.xpluo.shortlink.admin.common.convention.result.Results;
-import com.xpluo.shortlink.admin.dto.req.GroupAddReqDTO;
-import com.xpluo.shortlink.admin.dto.req.GroupQueryReqDTO;
+import com.xpluo.shortlink.admin.dto.req.group.GroupAddReqDTO;
+import com.xpluo.shortlink.admin.dto.req.group.GroupDeleteReqDTO;
+import com.xpluo.shortlink.admin.dto.req.group.GroupQueryReqDTO;
+import com.xpluo.shortlink.admin.dto.req.group.GroupUpdateReqDTO;
 import com.xpluo.shortlink.admin.dto.resp.GroupRespDTO;
 import com.xpluo.shortlink.admin.service.GroupService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author luoxiaopeng
@@ -29,8 +28,29 @@ public class GroupController {
         return Results.success();
     }
 
+    /**
+     * 分页查询分组列表
+     */
     @PostMapping("/queryGroup")
     public Result<PageInfo<GroupRespDTO>> queryGroup(@RequestBody GroupQueryReqDTO request) {
         return Results.success(groupService.listGroupPage(request));
+    }
+
+    /**
+     * 更新分组名称
+     */
+    @PostMapping("/updateGroupName")
+    public Result<Void> updateGroupName(@RequestBody GroupUpdateReqDTO req) {
+        groupService.updateGroupName(req);
+        return Results.success();
+    }
+
+    /**
+     * 删除短链接分组
+     */
+    @PostMapping("/deleteGroup")
+    public Result<Void> deleteGroup(@RequestBody GroupDeleteReqDTO req) {
+        groupService.deleteGroup(req);
+        return Results.success();
     }
 }
