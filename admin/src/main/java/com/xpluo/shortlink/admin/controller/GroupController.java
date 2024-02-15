@@ -3,14 +3,13 @@ package com.xpluo.shortlink.admin.controller;
 import com.github.pagehelper.PageInfo;
 import com.xpluo.shortlink.admin.common.convention.result.Result;
 import com.xpluo.shortlink.admin.common.convention.result.Results;
-import com.xpluo.shortlink.admin.dto.req.group.GroupAddReqDTO;
-import com.xpluo.shortlink.admin.dto.req.group.GroupDeleteReqDTO;
-import com.xpluo.shortlink.admin.dto.req.group.GroupQueryReqDTO;
-import com.xpluo.shortlink.admin.dto.req.group.GroupUpdateReqDTO;
+import com.xpluo.shortlink.admin.dto.req.group.*;
 import com.xpluo.shortlink.admin.dto.resp.GroupRespDTO;
 import com.xpluo.shortlink.admin.service.GroupService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author luoxiaopeng
@@ -51,6 +50,15 @@ public class GroupController {
     @PostMapping("/deleteGroup")
     public Result<Void> deleteGroup(@RequestBody GroupDeleteReqDTO req) {
         groupService.deleteGroup(req);
+        return Results.success();
+    }
+
+    /**
+     * 短链接分组排序
+     */
+    @PostMapping("/sortGroup")
+    public Result<Void> sortGroup(@RequestBody List<GroupSortReqDTO> req) {
+        groupService.sortGroup(req);
         return Results.success();
     }
 }

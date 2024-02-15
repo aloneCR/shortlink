@@ -9,6 +9,7 @@ import com.xpluo.shortlink.admin.dao.entity.GroupDO;
 import com.xpluo.shortlink.admin.dao.mapper.GroupMapper;
 import com.xpluo.shortlink.admin.dto.req.group.GroupDeleteReqDTO;
 import com.xpluo.shortlink.admin.dto.req.group.GroupQueryReqDTO;
+import com.xpluo.shortlink.admin.dto.req.group.GroupSortReqDTO;
 import com.xpluo.shortlink.admin.dto.req.group.GroupUpdateReqDTO;
 import com.xpluo.shortlink.admin.dto.resp.GroupRespDTO;
 import com.xpluo.shortlink.admin.service.GroupService;
@@ -74,5 +75,12 @@ public class GroupServiceImpl implements GroupService {
         if (success <= 0) {
             throw new ClientException("删除短链接分组失败");
         }
+    }
+
+    @Override
+    public void sortGroup(List<GroupSortReqDTO> req) {
+         String username = UserContext.getUsername();
+        // TODO 批量更新分组顺序，需要保证事务性
+
     }
 }

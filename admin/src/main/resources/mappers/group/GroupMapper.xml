@@ -27,7 +27,7 @@
         from t_group
         where username = #{username}
           and del_tag = 0
-        order by sort_order desc, update_time desc
+        order by sort_order asc, update_time desc
     </select>
 
     <update id="updateGroupName">
