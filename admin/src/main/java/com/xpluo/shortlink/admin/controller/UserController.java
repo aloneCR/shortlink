@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * @date
  */
 @RestController
-@RequestMapping("/api/shortlink/v1/user")
+@RequestMapping("/api/shortlink/v1/admin/user")
 public class UserController {
     @Resource
     private UserService userService;

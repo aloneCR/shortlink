@@ -16,7 +16,7 @@ import java.util.List;
  * @date 2023/12/24
  */
 @RestController
-@RequestMapping("/api/shortlink/v1/group")
+@RequestMapping("/api/shortlink/v1/admin/group")
 public class GroupController {
     @Resource
     private GroupService groupService;
