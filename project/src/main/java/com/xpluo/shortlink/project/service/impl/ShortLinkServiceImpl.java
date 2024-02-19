@@ -34,6 +34,8 @@ public class ShortLinkServiceImpl implements ShortLinkService {
         String shortUrl = doGetUniqueShortUrl(req.getOriginUrl(), req.getDomain());
         shortLinkDO.setShortUrl(shortUrl);
         shortLinkDO.setFullShortUrl(req.getDomain() + "/" + shortUrl);
+        shortLinkDO.setClickNum(0);
+        shortLinkDO.setEnableStatus(1);
         try {
             int success = shortLinkMapper.insertShortLink(shortLinkDO);
             if (success <= 0) {
