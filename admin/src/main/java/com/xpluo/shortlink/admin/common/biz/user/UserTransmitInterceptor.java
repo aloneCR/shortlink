@@ -2,6 +2,7 @@ package com.xpluo.shortlink.admin.common.biz.user;
 
 import com.xpluo.shortlink.admin.common.biz.user.properties.JwtProperties;
 import com.xpluo.shortlink.admin.common.constant.UserConstant;
+import com.xpluo.shortlink.admin.common.convention.exception.ClientException;
 import com.xpluo.shortlink.admin.toolkit.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -41,10 +42,10 @@ public class UserTransmitInterceptor implements HandlerInterceptor {
             UserContext.setUser(userInfoDTO);
         } catch (ExpiredJwtException ex) {
             log.error("Token已过期，请重新登录");
-            return false;
+            throw new ClientException("无权限访问");
         } catch (Exception ex) {
             log.error("鉴权失败:{}", ex.getMessage(), ex);
-            return false;
+            throw new ClientException("无权限访问");
         }
         return true;
     }
