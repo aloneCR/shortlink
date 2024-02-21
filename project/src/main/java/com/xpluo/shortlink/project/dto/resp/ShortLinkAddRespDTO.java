@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ShortLinkAddResp {
+public class ShortLinkAddRespDTO {
     /**
      * 短链接
      */

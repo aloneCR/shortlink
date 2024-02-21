@@ -1,7 +1,10 @@
 package com.xpluo.shortlink.project.service;
 
+import com.github.pagehelper.PageInfo;
 import com.xpluo.shortlink.project.dto.req.ShortLinkAddReqDTO;
-import com.xpluo.shortlink.project.dto.resp.ShortLinkAddResp;
+import com.xpluo.shortlink.project.dto.req.ShortLinkPageQueryReqDTO;
+import com.xpluo.shortlink.project.dto.resp.ShortLinkAddRespDTO;
+import com.xpluo.shortlink.project.dto.resp.ShortLinkPageQueryRespDTO;
 
 /**
  * @author luoxiaopeng
@@ -11,5 +14,7 @@ public interface ShortLinkService {
     /**
      * 新增短链接
      */
-    ShortLinkAddResp addShortLink(ShortLinkAddReqDTO req);
+    ShortLinkAddRespDTO addShortLink(ShortLinkAddReqDTO req);
+
+    PageInfo<ShortLinkPageQueryRespDTO> pageQueryShortUrl(ShortLinkPageQueryReqDTO req);
 }

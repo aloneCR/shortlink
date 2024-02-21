@@ -1,11 +1,15 @@
 package com.xpluo.shortlink.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xpluo.shortlink.project.common.convention.exception.ServiceException;
 import com.xpluo.shortlink.project.dao.entity.ShortLinkDO;
 import com.xpluo.shortlink.project.dao.mapper.ShortLinkMapper;
 import com.xpluo.shortlink.project.dto.req.ShortLinkAddReqDTO;
-import com.xpluo.shortlink.project.dto.resp.ShortLinkAddResp;
+import com.xpluo.shortlink.project.dto.req.ShortLinkPageQueryReqDTO;
+import com.xpluo.shortlink.project.dto.resp.ShortLinkAddRespDTO;
+import com.xpluo.shortlink.project.dto.resp.ShortLinkPageQueryRespDTO;
 import com.xpluo.shortlink.project.service.ShortLinkService;
 import com.xpluo.shortlink.project.toolkit.ShortUrlGenerator;
 import jakarta.annotation.Resource;
@@ -13,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author luoxiaopeng
@@ -28,7 +34,7 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     private RBloomFilter<String> shortLinkCreateBloomFilter;
 
     @Override
-    public ShortLinkAddResp addShortLink(ShortLinkAddReqDTO req) {
+    public ShortLinkAddRespDTO addShortLink(ShortLinkAddReqDTO req) {
         // TODO 检查短链接中gid是否存在
         ShortLinkDO shortLinkDO = BeanUtil.toBean(req, ShortLinkDO.class);
         String shortUrl = doGetUniqueShortUrl(req.getOriginUrl(), req.getDomain());
@@ -47,12 +53,20 @@ public class ShortLinkServiceImpl implements ShortLinkService {
         }
         // TODO：引入消息队列，保证数据库插入和布隆过滤器更新的事务！
         shortLinkCreateBloomFilter.add(shortLinkDO.getFullShortUrl());
-        return ShortLinkAddResp.builder()
+        return ShortLinkAddRespDTO.builder()
                 .shortUrl(shortUrl)
                 .fullShortUrl(shortLinkDO.getFullShortUrl())
                 .gid(req.getGid())
                 .originUrl(req.getOriginUrl())
                 .build();
+    }
+
+    @Override
+    public PageInfo<ShortLinkPageQueryRespDTO> pageQueryShortUrl(ShortLinkPageQueryReqDTO req) {
+        PageHelper.startPage(req.getPageNum(), req.getPageSize()).using("mysql");
+        List<ShortLinkDO> shortLinkDOS = shortLinkMapper.pageQueryShortLinkByGid(req.getGid());
+        List<ShortLinkPageQueryRespDTO> respDTOS = BeanUtil.copyToList(shortLinkDOS, ShortLinkPageQueryRespDTO.class);
+        return new PageInfo<>(respDTOS);
     }
 
     /**

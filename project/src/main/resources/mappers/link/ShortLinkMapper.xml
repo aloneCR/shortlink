@@ -38,7 +38,7 @@
     </sql>
 
     <insert id="insertShortLink" parameterType="shortLinkDO">
-        insert into t_link(domain, short_url, full_short_url, origin_url, gid,
+            insert into t_link(domain, short_url, full_short_url, origin_url, gid,
                            click_num, enable_status, created_type, valid_date_type,
                            valid_date, description)
             value (#{linkDO.domain}, #{linkDO.shortUrl}, #{linkDO.fullShortUrl},
@@ -51,5 +51,13 @@
         from t_link where del_tag = 0
         and full_short_url = #{fullShortUrl}
         and enable_status = 1
+    </select>
+
+    <select id="pageQueryShortLinkByGid" resultMap="linkResultMap">
+        select <include refid="baseColumns"/>
+        from t_link where del_tag = 0
+        and gid = #{gid}
+        and enable_status = 1
+        order by create_time desc
     </select>
 </mapper>
