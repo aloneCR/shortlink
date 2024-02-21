@@ -49,9 +49,10 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public PageInfo<GroupRespDTO> listGroupPage(GroupQueryReqDTO request) {
-        return PageHelper.startPage(request.getPageNum(), request.getPageSize())
-                .using("mysql")
-                .doSelectPageInfo(this::listGroup);
+        PageHelper.startPage(request.getPageNum(), request.getPageSize()).using("mysql");
+        String username = UserContext.getUsername();
+        List<GroupDO> groupDOList = groupMapper.queryShortLinkGroupByUsername(username);
+        return new PageInfo<>(BeanUtil.copyToList(groupDOList, GroupRespDTO.class));
     }
 
     @Override
