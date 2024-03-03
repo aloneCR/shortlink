@@ -32,4 +32,9 @@ public class ShortLinkController {
         return Results.success(shortLinkService.pageQueryShortUrl(req));
     }
 
+    @GetMapping("/ping")
+    public String ping() {
+        return "pong";
+    }
+
 }
